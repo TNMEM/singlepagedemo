@@ -86,7 +86,7 @@
                 cp = Raphael.colorpicker(40, 20, 300, "#eee"),
                 cp2 = Raphael.colorwheel(360, 20, 300, "#eee"),
             
-                clr = Raphael.color("#eee");
+            clr = Raphael.color("#eee");
             vr.innerHTML = clr.r;
             vg.innerHTML = clr.g;
             vb.innerHTML = clr.b;
@@ -98,9 +98,37 @@
                 cp.color(this.value);
                 cp2.color(this.value);
             };
+            //added lou king ... find closet matching "allowed" color
+            var grabClosestColor = function (r, g, b) {
+                //console.log("grab vals: ", r + " " + g + " " + b);
+                var colors = [[0, 0, 136],[136, 0, 136]];
+                var differencearray = [];
+                var i, difference, smallest, key;
+                for(i = 0; i < colors.length; i++) {
+                    difference = Math.sqrt( Math.pow(((r - colors[i][0])), 2) + Math.pow(((g - colors[i][1])), 2) + Math.pow(((b - colors[i][2])), 2) );
+                    //console.log("compare: ", colors[i][0] + " " + colors[i][1] + " " + colors[i][2]);
+                    //console.log("difference: ", difference);
+                    differencearray.push(difference);
+                }
+                //console.log("differencearray:");
+                smallest = Math.min.apply(null, differencearray);
+                //console.log(differencearray);
+                //console.log("smallest: ", smallest);
+                key = differencearray.indexOf(smallest);
+                //console.log("key: ", key);
+                return Raphael.rgb(colors[key][0], colors[key][1], colors[key][2]);
+            };
             // assigning onchange event handler
             var onchange = function (item) {
                 return function (clr) {
+                    //added lou king...
+                    var aClr = Raphael.getRGB(clr);
+                    //console.log("orig color: ", clr + " " + aClr["r"] + " " + aClr["g"] + " " + aClr["b"]);
+                    clr = grabClosestColor(aClr["r"], aClr["g"], aClr["b"]);
+                    //console.log("listed color: ", clr);
+                    cp.color(clr);
+                    cp2.color(clr);
+                    //end of add...
                     out.value = clr.replace(/^#(.)\1(.)\2(.)\3$/, "#$1$2$3");
                     item.color(clr);
                     out.style.background = clr;
