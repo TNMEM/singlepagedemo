@@ -66,89 +66,12 @@
                 font-size: .7em;
             }
         </style>
+        <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
         <script src="raphael.js"></script>
         <script src="colorpicker.js"></script>
         <script src="colorwheel.js"></script>
-        <script>
-        Raphael(function () {
-            var out = document.getElementById("output"),
-                vr = document.getElementById("vr"),
-                vg = document.getElementById("vg"),
-                vb = document.getElementById("vb"),
-                vh = document.getElementById("vh"),
-                vh2 = document.getElementById("vh2"),
-                vs = document.getElementById("vs"),
-                vs2 = document.getElementById("vs2"),
-                vv = document.getElementById("vv"),
-                vl = document.getElementById("vl"),
-            
-            // this is where colorpicker created
-                cp = Raphael.colorpicker(40, 20, 300, "#eee"),
-                cp2 = Raphael.colorwheel(360, 20, 300, "#eee"),
-            
-            clr = Raphael.color("#eee");
-            vr.innerHTML = clr.r;
-            vg.innerHTML = clr.g;
-            vb.innerHTML = clr.b;
-            vh.innerHTML = vh2.innerHTML = Math.round(clr.h * 360) + "°";
-            vs.innerHTML = vs2.innerHTML = Math.round(clr.s * 100) + "%";
-            vv.innerHTML = Math.round(clr.v * 100) + "%";
-            vl.innerHTML = Math.round(clr.l * 100) + "%";
-            out.onkeyup = function () {
-                cp.color(this.value);
-                cp2.color(this.value);
-            };
-            //added lou king ... find closet matching "allowed" color
-            var grabClosestColor = function (r, g, b) {
-                //console.log("grab vals: ", r + " " + g + " " + b);
-                var colors = [[0, 0, 136],[136, 0, 136]];
-                var differencearray = [];
-                var i, difference, smallest, key;
-                for(i = 0; i < colors.length; i++) {
-                    difference = Math.sqrt( Math.pow(((r - colors[i][0])), 2) + Math.pow(((g - colors[i][1])), 2) + Math.pow(((b - colors[i][2])), 2) );
-                    //console.log("compare: ", colors[i][0] + " " + colors[i][1] + " " + colors[i][2]);
-                    //console.log("difference: ", difference);
-                    differencearray.push(difference);
-                }
-                //console.log("differencearray:");
-                smallest = Math.min.apply(null, differencearray);
-                //console.log(differencearray);
-                //console.log("smallest: ", smallest);
-                key = differencearray.indexOf(smallest);
-                //console.log("key: ", key);
-                return Raphael.rgb(colors[key][0], colors[key][1], colors[key][2]);
-            };
-            // assigning onchange event handler
-            var onchange = function (item) {
-                return function (clr) {
-                    //added lou king...
-                    var aClr = Raphael.getRGB(clr);
-                    //console.log("orig color: ", clr + " " + aClr["r"] + " " + aClr["g"] + " " + aClr["b"]);
-                    clr = grabClosestColor(aClr["r"], aClr["g"], aClr["b"]);
-                    //console.log("listed color: ", clr);
-                    cp.color(clr);
-                    cp2.color(clr);
-                    //end of add...
-                    out.value = clr.replace(/^#(.)\1(.)\2(.)\3$/, "#$1$2$3");
-                    item.color(clr);
-                    out.style.background = clr;
-                    out.style.background = "white";
-                    out.style.color = Raphael.rgb2hsb(clr).b < .5 ? "#fff" : "#000";
-                    clr = Raphael.color(clr);
-                    vr.innerHTML = clr.r;
-                    vg.innerHTML = clr.g;
-                    vb.innerHTML = clr.b;
-                    vh.innerHTML = vh2.innerHTML = Math.round(clr.h * 360) + "°";
-                    vs.innerHTML = vs2.innerHTML = Math.round(clr.s * 100) + "%";
-                    vv.innerHTML = Math.round(clr.v * 100) + "%";
-                    vl.innerHTML = Math.round(clr.l * 100) + "%";
-                };
-            };
-            cp.onchange = onchange(cp2);
-            cp2.onchange = onchange(cp);
-            // that’s it. Too easy
-        });
-        </script>
+        <script src="md-wheels.js"></script>
+        <script src="md-closecolor.js"></script>
     </head>
     <body>
         <div id="content">
