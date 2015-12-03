@@ -3,7 +3,7 @@
 var grabClosestColor = function(r, g, b, mode, primary) {
     // false for normal picker, true for material design picker...
     if (mode != true) {
-        return Raphael.rgb(r, g, b);
+        return;
     }
     //console.log("grab vals: ", r + " " + g + " " + b);
     var colors = {
