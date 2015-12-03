@@ -132,6 +132,7 @@
                     out.value = clr.replace(/^#(.)\1(.)\2(.)\3$/, "#$1$2$3");
                     item.color(clr);
                     out.style.background = clr;
+                    out.style.background = "white";
                     out.style.color = Raphael.rgb2hsb(clr).b < .5 ? "#fff" : "#000";
                     clr = Raphael.color(clr);
                     vr.innerHTML = clr.r;
