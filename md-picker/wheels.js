@@ -29,9 +29,7 @@ Raphael(function() {
 
     // get the json file with the material design colors...
     var colors;
-    getColors();
-
-    function getColors() {
+    (function() {
         var gc = $.ajax({
             type: 'GET',
             url: "md-colors.json",
@@ -46,54 +44,53 @@ Raphael(function() {
             console.log(response);
             colors = response;
         });
-    }
-
-    function setDials(clr) {
-        clr = Raphael.color(clr);
-        vr.innerHTML = clr.r;
-        vg.innerHTML = clr.g;
-        vb.innerHTML = clr.b;
-        vh.innerHTML = vh2.innerHTML = Math.round(clr.h * 360) + "°";
-        vs.innerHTML = vs2.innerHTML = Math.round(clr.s * 100) + "%";
-        vv.innerHTML = Math.round(clr.v * 100) + "%";
-        vl.innerHTML = Math.round(clr.l * 100) + "%";
-    }
+    })();
 
     // onchange event handler...
     var onchange = function(item) {
         return function(clr) {
-            console.log("onchange:");
-            console.log(clr);
-            if (mdc.checked == true) {
-                // returns array of [rgbString, mdColorName, mdTinkNumber]...
-                var tmp = calcColor(clr);
-                clr = tmp[0];
-                h1.innerHTML = tmp[1] + " (" + tmp[2] + ")";
-                cp.color(clr);
-                cp2.color(clr);
-            }
-            else {
-                h1.innerHTML = "Color Picker";
-            }
-                    out.value = clr.replace(/^#(.)\1(.)\2(.)\3$/, "#$1$2$3");
-        item.color(clr);
-        //out.style.background = clr;
-        out.style.background = "white";
-        //out.style.color = Raphael.rgb2hsb(clr).b < .5 ? "#fff" : "#000";
-        out.style.color = "gray";
+            //console.log("onchange:");
+            //console.log(clr);
+            clr = checkCalcColor(clr);
+            item.color(clr);
             setDials(clr);
         };
     };
     // handle color pickers...
     cp.onchange = onchange(cp2);
     cp2.onchange = onchange(cp);
+
     // handle hex/name box...
-    out.onkeyup = function() {
-        h1.innerHTML = "Manual";
-        cp.color(this.value);
-        cp2.color(this.value);
-        setDials(this.value);
+    out.onkeypress = function(event) {
+        //h1.innerHTML = "Manual";
+        // trigger on enter key...
+        var x = event.which || event.keyCode;
+        if (x == 13) {
+            clr = checkCalcColor(this.value);
+            cp.color(clr);
+            cp2.color(clr);
+            setDials(clr);
+        }
     };
+
+    // filter the check boxes to see how to handle color and settings...
+    function checkCalcColor(clr) {
+        if (mdc.checked == true) {
+            // returns array of [rgbString, mdColorName, mdTinkNumber]...
+            var tmp = calcColor(clr);
+            clr = tmp[0];
+            h1.innerHTML = tmp[1] + " (" + tmp[2] + ")";
+            cp.color(clr);
+            cp2.color(clr);
+        }
+        else {
+            h1.innerHTML = "Color Picker";
+            // don't need this since no color changes...
+            //cp.color(clr);
+            //cp2.color(clr);
+        }
+        return clr;
+    }
 
     // calculate closest color based on material color design: just primaries or all...
     function calcColor(clr) {
@@ -132,5 +129,22 @@ Raphael(function() {
             }
         }
         return ([Raphael.rgb(closest[0], closest[1], closest[2]), closest[3], closest[4]]);
+    }
+
+    // twist the little readouts...
+    function setDials(clr) {
+        out.value = clr.replace(/^#(.)\1(.)\2(.)\3$/, "#$1$2$3");
+        //out.style.background = clr;
+        out.style.background = "white";
+        //out.style.color = Raphael.rgb2hsb(clr).b < .5 ? "#fff" : "#000";
+        out.style.color = "gray";
+        clr = Raphael.color(clr);
+        vr.innerHTML = clr.r;
+        vg.innerHTML = clr.g;
+        vb.innerHTML = clr.b;
+        vh.innerHTML = vh2.innerHTML = Math.round(clr.h * 360) + "°";
+        vs.innerHTML = vs2.innerHTML = Math.round(clr.s * 100) + "%";
+        vv.innerHTML = Math.round(clr.v * 100) + "%";
+        vl.innerHTML = Math.round(clr.l * 100) + "%";
     }
 });
