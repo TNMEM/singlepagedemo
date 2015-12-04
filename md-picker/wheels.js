@@ -20,7 +20,7 @@ Raphael(function() {
     vh.innerHTML = vh2.innerHTML = Math.round(clr.h * 360) + "°";
     vs.innerHTML = vs2.innerHTML = Math.round(clr.s * 100) + "%";
     vv.innerHTML = Math.round(clr.v * 100) + "%";
-    vl.innerHTML ="Color Picker";
+    vl.innerHTML = Math.round(clr.l * 100) + "%";
     out.onkeyup = function() {
         cp.color(this.value);
         cp2.color(this.value);
@@ -90,8 +90,10 @@ Raphael(function() {
             cp2.color(clr);
             out.value = clr.replace(/^#(.)\1(.)\2(.)\3$/, "#$1$2$3");
             item.color(clr);
+            //out.style.background = clr;
             out.style.background = "white";
             out.style.color = Raphael.rgb2hsb(clr).b < .5 ? "#fff" : "#000";
+            out.style.color = "gray";
             clr = Raphael.color(clr);
             vr.innerHTML = clr.r;
             vg.innerHTML = clr.g;
