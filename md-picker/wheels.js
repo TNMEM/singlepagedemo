@@ -48,35 +48,40 @@ Raphael(function() {
         });
     }
 
+    function setDials(clr) {
+        clr = Raphael.color(clr);
+        vr.innerHTML = clr.r;
+        vg.innerHTML = clr.g;
+        vb.innerHTML = clr.b;
+        vh.innerHTML = vh2.innerHTML = Math.round(clr.h * 360) + "°";
+        vs.innerHTML = vs2.innerHTML = Math.round(clr.s * 100) + "%";
+        vv.innerHTML = Math.round(clr.v * 100) + "%";
+        vl.innerHTML = Math.round(clr.l * 100) + "%";
+    }
+
     // onchange event handler...
     var onchange = function(item) {
         return function(clr) {
             console.log("onchange:");
             console.log(clr);
             if (mdc.checked == true) {
-                // returns array of [rgbString, mdColorName]...
+                // returns array of [rgbString, mdColorName, mdTinkNumber]...
                 var tmp = calcColor(clr);
                 clr = tmp[0];
                 h1.innerHTML = tmp[1] + " (" + tmp[2] + ")";
                 cp.color(clr);
                 cp2.color(clr);
-            } else {
+            }
+            else {
                 h1.innerHTML = "Color Picker";
             }
-            out.value = clr.replace(/^#(.)\1(.)\2(.)\3$/, "#$1$2$3");
-            item.color(clr);
-            //out.style.background = clr;
-            out.style.background = "white";
-            //out.style.color = Raphael.rgb2hsb(clr).b < .5 ? "#fff" : "#000";
-            out.style.color = "gray";
-            clr = Raphael.color(clr);
-            vr.innerHTML = clr.r;
-            vg.innerHTML = clr.g;
-            vb.innerHTML = clr.b;
-            vh.innerHTML = vh2.innerHTML = Math.round(clr.h * 360) + "°";
-            vs.innerHTML = vs2.innerHTML = Math.round(clr.s * 100) + "%";
-            vv.innerHTML = Math.round(clr.v * 100) + "%";
-            vl.innerHTML = Math.round(clr.l * 100) + "%";
+                    out.value = clr.replace(/^#(.)\1(.)\2(.)\3$/, "#$1$2$3");
+        item.color(clr);
+        //out.style.background = clr;
+        out.style.background = "white";
+        //out.style.color = Raphael.rgb2hsb(clr).b < .5 ? "#fff" : "#000";
+        out.style.color = "gray";
+            setDials(clr);
         };
     };
     // handle color pickers...
@@ -87,6 +92,7 @@ Raphael(function() {
         h1.innerHTML = "Manual";
         cp.color(this.value);
         cp2.color(this.value);
+        setDials(this.value);
     };
 
     // calculate closest color based on material color design: just primaries or all...
@@ -105,7 +111,7 @@ Raphael(function() {
                         if (mdm.checked == true && tint.substr(0, 4) == "P500") {
                             anRGB = Raphael.getRGB(obj[tint]);
                         }
-                        else if (mdm.checked == false /*&& tint.substr(0, 1) == "A" */) {
+                        else if (mdm.checked == false /*&& tint.substr(0, 1) == "A" */ ) {
                             anRGB = Raphael.getRGB(obj[tint]);
                         }
                         else {
