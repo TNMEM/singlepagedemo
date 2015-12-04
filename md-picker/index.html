@@ -18,7 +18,7 @@
             }
             h1 {
                 font-weight: 300;
-                font-size: 3em;
+                font-size: 2em;
                 position: absolute;
                 right: 10px;
                 bottom: 50px;
@@ -76,7 +76,8 @@
     </head>
     <body>
         <div id="content">
-            <h1 id="h1">Color Picker</h1>
+            <!-- h1 is the main headline. -->
+            <h1 id="h1"></h1>
             <table id="values">
                 <tr>
                     <th>R</th>
@@ -105,6 +106,7 @@
             </table>
             <input type="text" id="output" value="#eeeeee">
             <p id="copy">
+                <input type="checkbox" id="mdColors"> Material Colors <input type="checkbox" id="mdMain" checked> Just Main Colors <br>
                 Powered by <a href="http://raphaeljs.com/">Raphaël</a>
             </p>
         </div>
