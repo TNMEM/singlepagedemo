@@ -1,115 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>Color Picker — Raphaël</title>
-        <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900' rel='stylesheet' type='text/css'>
-        <style media="screen">
-            body {
-                background: #fff;
-                color: #000;
-                font: 300 100.01%/1.2 "Roboto", sans-serif;
-                margin: 0 30px;
-            }
-            #content {
-                width: 640px;
-                height: 480px;
-                position: relative;
-            }
-            h1 {
-                font-weight: 300;
-                font-size: 2em;
-                position: absolute;
-                right: 10px;
-                bottom: 50px;
-            }
-            p {
-                font-size: 2em;
-            }
-            #benefits {
-                margin-top: 350px;
-            }
-            #copy a {
-                color: #666;
-                text-decoration: none;
-            }
-            #picker2 {
-                width: 300px;
-                position: absolute;
-                top: 250px;
-                left: 50%;
-                margin-left: -150px;
-            }
-            #benefits {
-                margin-bottom: 0;
-            }
-            #output {
-                background: white;
-                color: gray;
-                position: absolute;
-                font-size: 2em;
-                bottom: 10px;
-                left: 20px;
-                font-family: monospace;
-                margin-top: -20px;
-            }
-            #copy {
-                position: absolute;
-                right: 10px;
-                bottom: 10px;
-                margin: 0;
-                font-size: .6em;
-                color: #666;
-            }
-            #values {
-                position: absolute;
-                left: 20px;
-                top: 363px;
-                font-size: 1em;
-            }
-        </style>
-        <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
-        <script src="raphael.js"></script>
-        <script src="colorpicker.js"></script>
-        <script src="colorwheel.js"></script>
-        <script src="wheels.js"></script>
-    </head>
-    <body>
-        <div id="content">
-            <!-- h1 is the main headline. -->
-            <h1 id="h1"></h1>
-            <table id="values">
-                <tr>
-                    <th>R</th>
-                    <td id="vr"></td>
-                    <th>H</th>
-                    <td id="vh"></td>
-                    <th>H</th>
-                    <td id="vh2"></td>
-                </tr>
-                <tr>
-                    <th>G</th>
-                    <td id="vg"></td>
-                    <th>S</th>
-                    <td id="vs"></td>
-                    <th>S</th>
-                    <td id="vs2"></td>
-                </tr>
-                <tr>
-                    <th>B</th>
-                    <td id="vb"></td>
-                    <th>B</th>
-                    <td id="vv"></td>
-                    <th>L</th>
-                    <td id="vl"></td>
-                </tr>
-            </table>
-            <input type="text" id="output" value="#eeeeee">
-            <p id="copy">
-                <input type="checkbox" id="mdColors"> Material Colors <input type="checkbox" id="mdMain" checked> Just Main Colors <br>
-                Powered by <a href="http://raphaeljs.com/">Raphaël</a>
-            </p>
-        </div>
-        <div id="picker2"></div>
-    </body>
+
+<head>
+    <meta charset="utf-8">
+    <title>Color Picker — Raphaël</title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900' rel='stylesheet' type='text/css'>
+    <style media="screen">
+        body {
+            background: #fff;
+            color: #000;
+            font: 300 100.01%/1.2 "Roboto", sans-serif;
+            margin: 0 30px;
+        }
+        
+        #content {
+            width: 640px;
+            height: 480px;
+            position: relative;
+        }
+        
+        h1 {
+            font-weight: 300;
+            font-size: 1.5em;
+            position: absolute;
+            right: 10px;
+            bottom: 50px;
+        }
+        
+        p {
+            font-size: 2em;
+        }
+        
+        #benefits {
+            margin-top: 350px;
+            margin-bottom: 0;
+        }
+        
+        #copy a {
+            color: #666;
+            text-decoration: none;
+        }
+        
+        #picker2 {
+            width: 300px;
+            position: absolute;
+            top: 250px;
+            left: 50%;
+            margin-left: -150px;
+        }
+
+        #output {
+            background: white;
+            color: gray;
+            position: absolute;
+            font-size: 2em;
+            bottom: 10px;
+            left: 20px;
+            font-family: monospace;
+            margin-top: -20px;
+        }
+        
+        #copy {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            margin: 0;
+            font-size: .6em;
+            color: #666;
+        }
+        
+        #values {
+            position: absolute;
+            left: 20px;
+            top: 363px;
+            font-size: 1em;
+        }
+    </style>
+    <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="raphael.js"></script>
+    <script src="colorpicker.js"></script>
+    <script src="colorwheel.js"></script>
+    <script src="wheels.js"></script>
+    <script src='tinycolor.js'></script>
+</head>
+
+<body>
+    <div id="content">
+        <!-- h1 is the main headline. -->
+        <h1 id="h1"></h1>
+        <table id="values">
+            <tr>
+                <th>R</th>
+                <td id="vr"></td>
+                <th>H</th>
+                <td id="vh"></td>
+                <th>H</th>
+                <td id="vh2"></td>
+            </tr>
+            <tr>
+                <th>G</th>
+                <td id="vg"></td>
+                <th>S</th>
+                <td id="vs"></td>
+                <th>S</th>
+                <td id="vs2"></td>
+            </tr>
+            <tr>
+                <th>B</th>
+                <td id="vb"></td>
+                <th>B</th>
+                <td id="vv"></td>
+                <th>L</th>
+                <td id="vl"></td>
+            </tr>
+        </table>
+        <input type="text" id="output">
+        <p id="copy">
+            <input type="checkbox" id="mdColors"> Material Colors
+            <input type="checkbox" id="mdMain" checked> Just Main Colors
+            <br> Powered by <a href="http://raphaeljs.com/">Raphaël</a>
+        </p>
+    </div>
+    <div id="picker2"></div>
+    <div class="cTable"></div>
+</body>
+
 </html>
