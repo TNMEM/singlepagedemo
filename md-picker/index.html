@@ -50,13 +50,11 @@
         }
 
         #output {
-            background: white;
-            color: gray;
             position: absolute;
-            font-size: 2em;
+            font-size: 1.5em;
             bottom: 10px;
             left: 20px;
-            font-family: monospace;
+            /*font-family: monospace;*/
             margin-top: -20px;
         }
         
@@ -76,7 +74,7 @@
             font-size: 1em;
         }
         
-        .cTable td, th {
+        .cTable td, .cTable th {
             padding: 4px;
         }
     </style>
@@ -120,8 +118,8 @@
         </table>
         <input type="text" id="output">
         <p id="copy">
-            <input type="checkbox" id="mdColors"> Material Colors
-            <input type="checkbox" id="mdMain" checked> Just Main Colors
+            <input type="checkbox" id="mdColors">&nbsp;Use&nbsp;Material&nbsp;Colors
+            <input type="checkbox" id="mdMain" checked>&nbsp;Limit&nbsp;to&nbsp;Main<br>
             <br> Powered by <a href="http://raphaeljs.com/">Raphaël</a>
         </p>
     </div>

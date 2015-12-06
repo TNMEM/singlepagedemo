@@ -1,6 +1,6 @@
 Raphael(function() {
     // get the elements...
-    var initialColor = "#3f51b5";
+    var initialColor = "#f44336";
     var out = document.getElementById("output"),
         vr = document.getElementById("vr"),
         vg = document.getElementById("vg"),
@@ -102,6 +102,15 @@ Raphael(function() {
                 aList = tiny.splitcomplement();
                 break;
             case ("usearray"):
+                //console.log("cArray entry: ", cArray);
+                if (cArray.length > 12) {
+                    var tmpList = cArray.slice();
+                    tmpList.splice(12);
+                    cArray.splice(0, 12);
+                    //console.log("tmplist splice: ", cArray);
+                    //console.log("cArray test: ", cArray);
+                    cTable(title, baseColor, "usearray", tmpList);
+                }
                 aList = cArray.map(tinycolor);
                 break;
             default:
@@ -274,7 +283,7 @@ Raphael(function() {
         //out.style.background = clr;
         out.style.background = "white";
         //out.style.color = Raphael.rgb2hsb(clr).b < .5 ? "#fff" : "#000";
-        out.style.color = "gray";
+        out.style.color = "black";
         clr = Raphael.color(clr);
         vr.innerHTML = clr.r;
         vg.innerHTML = clr.g;
