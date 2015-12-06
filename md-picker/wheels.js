@@ -74,17 +74,20 @@ Raphael(function() {
     // color keys from tinycolor ...
     function colorKeys(baseColor) {
         cTable("Material Design", baseColor, "usearray", mdMainColors);
-        cTable("Triad", baseColor, "triad");
-        cTable("Tetrad", baseColor, "tetrad");
         cTable("Monochromatic", baseColor, "monochromatic");
         cTable("Analogous", baseColor, "analogous");
+        cTable("Complement", baseColor, "complement");
         cTable("Split Complement", baseColor, "splitcomplement");
+        cTable("Triad", baseColor, "triad");
+        cTable("Tetrad", baseColor, "tetrad");
     }
 
     // do the cTable fills...
     function cTable(title, baseColor, action, cArray) {
         var tiny = tinycolor(baseColor);
+        console.log("tinyColor: ", tiny)
         var aList;
+        var rowLimit = 7;
         switch (action) {
             case ("triad"):
                 aList = tiny.triad();
@@ -98,20 +101,34 @@ Raphael(function() {
             case ("analogous"):
                 aList = tiny.analogous();
                 break;
+            case ("complement"):
+                var tmpList = [];
+                aList = tmpList;
+                aList.push(tiny);
+                aList.push(tiny.complement());
+                console.log("complement: ", aList);
+                break;
             case ("splitcomplement"):
                 aList = tiny.splitcomplement();
                 break;
             case ("usearray"):
+                // recursion to correct-length rows...
                 //console.log("cArray entry: ", cArray);
-                if (cArray.length > 12) {
-                    var tmpList = cArray.slice();
-                    tmpList.splice(12);
-                    cArray.splice(0, 12);
-                    //console.log("tmplist splice: ", cArray);
-                    //console.log("cArray test: ", cArray);
-                    cTable(title, baseColor, "usearray", tmpList);
+                if (cArray.length > rowLimit) {
+                    // tmpList receives remaining items over sets of rowLimit..
+                    var r = (cArray.length % rowLimit);
+                    r = r == 0 ? rowLimit : r;
+                    //console.log("lastOnes: ", r);
+                    var tmpList = cArray.slice(cArray.length - r);
+                    // tempList2 receives elements before those removed above rowLimit...
+                    var tmpList2 = cArray.slice(0, cArray.length - r);
+                    //console.log("tmplist splice: ", tmpList);
+                    //console.log("tmpList2 test: ", tmpList2);
+                    cTable(title, baseColor, "usearray", tmpList2);
+                    aList = tmpList.map(tinycolor);
+                } else {
+                    aList = cArray.map(tinycolor);
                 }
-                aList = cArray.map(tinycolor);
                 break;
             default:
                 break;
@@ -123,7 +140,7 @@ Raphael(function() {
         }
         s += "</tr><tr><th></th>";
         for (i = 0; i < aList.length; i++) {
-            s += "<td data-rgb=\"" + aList[i].toHexString() + "\">" + aList[i].toHexString() + "</td>";
+            s += "<th data-rgb=\"" + aList[i].toHexString() + "\">" + aList[i].toHexString() + "</t>";
         }
         s += "</tr></table>";
         $("div.cTable").append(s);
