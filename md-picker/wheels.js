@@ -46,7 +46,7 @@ Raphael(function() {
             console.log(response);
             mdColors = response;
             justMdMainColors();
-            colorKeys();
+            colorKeys(initialColor);
         });
     })();
 
@@ -72,20 +72,19 @@ Raphael(function() {
     }
 
     // color keys from tinycolor ...
-    function colorKeys() {
-        cTable(initialColor, "usearray", mdMainColors);
-        cTable(initialColor, "triad");
-        cTable(initialColor, "tetrad");
-        cTable(initialColor, "monochromatic");
-        cTable(initialColor, "analogous");
-        cTable(initialColor, "splitcomplement");
+    function colorKeys(baseColor) {
+        cTable("Material Design", baseColor, "usearray", mdMainColors);
+        cTable("Triad", baseColor, "triad");
+        cTable("Tetrad", baseColor, "tetrad");
+        cTable("Monochromatic", baseColor, "monochromatic");
+        cTable("Analogous", baseColor, "analogous");
+        cTable("Split Complement", baseColor, "splitcomplement");
     }
 
     // do the cTable fills...
-    function cTable(baseColor, action, cArray) {
+    function cTable(title, baseColor, action, cArray) {
         var tiny = tinycolor(baseColor);
         var aList;
-        var aLabel;
         switch (action) {
             case ("triad"):
                 aList = tiny.triad();
@@ -109,21 +108,26 @@ Raphael(function() {
                 break;
         }
         var i, s;
-        s = "<table><tr>";
+        s = "<table><tr><th>" + title + "</th>";
         for (i = 0; i < aList.length; i++) {
-            s += "<td bgcolor=\"" + aList[i].toHexString() + "\"></td>";
+            s += "<td bgcolor=\"" + aList[i].toHexString() + "\" data-rgb=\"" + aList[i].toHexString() + "\"></td>";
         }
-        s += "</tr><tr>";
+        s += "</tr><tr><th></th>";
         for (i = 0; i < aList.length; i++) {
-            s += "<td>" + aList[i].toHexString() + "</td>";
+            s += "<td data-rgb=\"" + aList[i].toHexString() + "\">" + aList[i].toHexString() + "</td>";
         }
         s += "</tr></table>";
         $("div.cTable").append(s);
         //console.log(aList);
-        console.log(aList.map(function(f) {
-            return f.toHexString();
-        }));
+        //console.log(aList.map(function(f) {
+        //    return f.toHexString();
+        //}));
     }
+
+    // handle click on color keys / cTable elements "TD" elevents...
+    $('.cTable').on('click', 'td', function(e) {
+        out.value = $(this).data("rgb");
+    });
 
     // onchange event handler...
     var onchange = function(item) {
