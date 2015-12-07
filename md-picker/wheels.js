@@ -63,7 +63,7 @@ Raphael(function() {
                 for (tint in obj) {
                     if (obj.hasOwnProperty(tint)) {
                         if (tint.substr(0, 4) == "P500") {
-                            mdMainColors.push(obj[tint]);
+                            mdMainColors.push([ obj[tint], key + " (" + tint + "} materializecss: " + key.toLowerCase() + " " + mdColors.ize[tint]  ]);
                         }
                     }
                 }
@@ -74,7 +74,15 @@ Raphael(function() {
     // color keys ... some from tinycolor...
     function colorKeys(baseColor) {
         $("div.cTable").empty();
-        cTable("MD Main", baseColor, "usearray", mdMainColors);
+
+        $("div.cTable").append(
+            "<p>Click any color to change the base color used in combinations.</p>"
+        );
+
+        $("div.cTable").append("<h4>Google Material Design main '500' colors</h4>");
+        cTable("MD", baseColor, "mdarray", mdMainColors);
+
+        $("div.cTable").append("<h4>Standard Combinations</h4>");
         cTable("Monochromatic", baseColor, "monochromatic");
         cTable("Analogous", baseColor, "analogous");
         cTable("Complement", baseColor, "complement");
@@ -83,7 +91,7 @@ Raphael(function() {
         cTable("Tetrad", baseColor, "tetrad");
     }
 
-    // do the cTable fills...
+    // do the cTable fills ... arrays expected [rgb, description] ...
     function cTable(title, baseColor, action, cArray) {
         var tiny = tinycolor(baseColor);
         var aList;
@@ -91,26 +99,43 @@ Raphael(function() {
         switch (action) {
             case ("triad"):
                 aList = tiny.triad();
+                aList = aList.map(function(rgb) {
+                    return [rgb, ""];
+                });
                 break;
             case ("tetrad"):
                 aList = tiny.tetrad();
+                aList = aList.map(function(rgb) {
+                    return [rgb, ""];
+                });
                 break;
             case ("monochromatic"):
                 aList = tiny.monochromatic();
+                aList = aList.map(function(rgb) {
+                    return [rgb, ""];
+                });
                 break;
             case ("analogous"):
                 aList = tiny.analogous();
+                aList = aList.map(function(rgb) {
+                    return [rgb, ""];
+                });
                 break;
             case ("complement"):
-                var tmpList = [];
-                aList = tmpList;
+                aList = [];
                 aList.push(tiny);
                 aList.push(tiny.complement());
+                aList = aList.map(function(rgb) {
+                    return [rgb, ""];
+                });
                 break;
             case ("splitcomplement"):
                 aList = tiny.splitcomplement();
+                aList = aList.map(function(rgb) {
+                    return [rgb, ""];
+                });
                 break;
-            case ("usearray"):
+            case ("mdarray"):
                 // recursion to correct-length rows...
                 if (cArray.length > rowLimit) {
                     // tmpList receives remaining items over sets of rowLimit..
@@ -119,24 +144,30 @@ Raphael(function() {
                     var tmpList = cArray.slice(cArray.length - r);
                     // tempList2 receives elements before those removed above rowLimit...
                     var tmpList2 = cArray.slice(0, cArray.length - r);
-                    cTable(title, baseColor, "usearray", tmpList2);
-                    aList = tmpList.map(tinycolor);
+                    cTable(title, baseColor, "mdarray", tmpList2);
+                    aList = jQuery.map(tmpList, function(n, i) {
+                        return [ [tinycolor(n[0]), n[1]] ];
+                    });
+                    //aList = tmpList.map(tinycolor);
                 }
                 else {
-                    aList = cArray.map(tinycolor);
+                    aList = jQuery.map(cArray, function(n, i) {
+                        return [ [tinycolor(n[0]), n[1]] ];
+                    });
+                    //aList = cArray.map(tinycolor);
                 }
                 break;
             default:
                 break;
         }
         var i, s;
-        s = "<table><tr><th>" + title + "</th>";
+        s = "<table><tr><td>" + title + "</td>";
         for (i = 0; i < aList.length; i++) {
-            s += "<td bgcolor=\"" + aList[i].toHexString() + "\" data-rgb=\"" + aList[i].toHexString() + "\"></td>";
+            s += "<th title=\"" + aList[i][1] + "\" bgcolor=\"" + aList[i][0].toHexString() + "\" data-rgb=\"" + aList[i][0].toHexString() + "\"></th>";
         }
-        s += "</tr><tr><th></th>";
+        s += "</tr><tr><td></td>";
         for (i = 0; i < aList.length; i++) {
-            s += "<th data-rgb=\"" + aList[i].toHexString() + "\">" + aList[i].toHexString() + "</t>";
+            s += "<td data-rgb=\"" + aList[i][0].toHexString() + "\">" + aList[i][0].toHexString() + "</td>";
         }
         s += "</tr></table>";
         $("div.cTable").append(s);
@@ -167,7 +198,7 @@ Raphael(function() {
     };
 
     // handle click on color keys / cTable elements "TD" elevents...
-    $('.cTable').on('click', 'td', function(e) {
+    $('.cTable').on('click', 'th', function(e) {
         out.value = $(this).data("rgb");
         var event = jQuery.Event('keypress');
         event.which = 13;
@@ -234,7 +265,7 @@ Raphael(function() {
         out.style.background = "white";
         //out.style.color = Raphael.rgb2hsb(clr).b < .5 ? "#fff" : "#000";
         out.style.color = "black";
-        
+
         colorKeys(clr);
 
         clr = Raphael.color(clr);
