@@ -12,8 +12,8 @@ Raphael(function() {
         vv = document.getElementById("vv"),
         vl = document.getElementById("vl"),
         h1 = document.getElementById("h1"),
-        mdc = document.getElementById("mdColors"),
-        mdm = document.getElementById("mdMain"),
+        mdc = document.getElementById("mdColorsChk"),
+        mdm = document.getElementById("mdMainChk"),
         // create colorpicker...
         cp = Raphael.colorpicker(40, 20, 300, initialColor),
         cp2 = Raphael.colorwheel(360, 20, 300, initialColor),
@@ -29,7 +29,8 @@ Raphael(function() {
     vl.innerHTML = Math.round(clr.l * 100) + "%";
     h1.innerHTML = "Color Picker";
 
-    // get the json file with the material design mdColors...
+    // get the json file with the material design mdColors
+    // ... this is a javascript object ...
     var mdColors;
     (function() {
         var gc = $.ajax({
@@ -50,20 +51,19 @@ Raphael(function() {
         });
     })();
 
-    // get the mdMainColors...
-    // called the first time from ajax done.
+    // get the mdMainColors
+    // ... this is a simple javascript array...
     var mdMainColors = [];
 
     function justMdMainColors() {
         var key, obj, tint;
-        for (key in mdColors) {
-            if (mdColors.hasOwnProperty(key)) {
-                obj = mdColors[key];
+        for (key in mdColors.md) {
+            if (mdColors.md.hasOwnProperty(key)) {
+                obj = mdColors.md[key];
                 for (tint in obj) {
                     if (obj.hasOwnProperty(tint)) {
                         if (tint.substr(0, 4) == "P500") {
                             mdMainColors.push(obj[tint]);
-                            //alert(obj[tint]);
                         }
                     }
                 }
@@ -71,9 +71,10 @@ Raphael(function() {
         }
     }
 
-    // color keys from tinycolor ...
+    // color keys ... some from tinycolor...
     function colorKeys(baseColor) {
-        cTable("Material Design", baseColor, "usearray", mdMainColors);
+        $("div.cTable").empty();
+        cTable("MD Main", baseColor, "usearray", mdMainColors);
         cTable("Monochromatic", baseColor, "monochromatic");
         cTable("Analogous", baseColor, "analogous");
         cTable("Complement", baseColor, "complement");
@@ -85,9 +86,8 @@ Raphael(function() {
     // do the cTable fills...
     function cTable(title, baseColor, action, cArray) {
         var tiny = tinycolor(baseColor);
-        console.log("tinyColor: ", tiny)
         var aList;
-        var rowLimit = 7;
+        var rowLimit = 10;
         switch (action) {
             case ("triad"):
                 aList = tiny.triad();
@@ -106,27 +106,23 @@ Raphael(function() {
                 aList = tmpList;
                 aList.push(tiny);
                 aList.push(tiny.complement());
-                console.log("complement: ", aList);
                 break;
             case ("splitcomplement"):
                 aList = tiny.splitcomplement();
                 break;
             case ("usearray"):
                 // recursion to correct-length rows...
-                //console.log("cArray entry: ", cArray);
                 if (cArray.length > rowLimit) {
                     // tmpList receives remaining items over sets of rowLimit..
                     var r = (cArray.length % rowLimit);
                     r = r == 0 ? rowLimit : r;
-                    //console.log("lastOnes: ", r);
                     var tmpList = cArray.slice(cArray.length - r);
                     // tempList2 receives elements before those removed above rowLimit...
                     var tmpList2 = cArray.slice(0, cArray.length - r);
-                    //console.log("tmplist splice: ", tmpList);
-                    //console.log("tmpList2 test: ", tmpList2);
                     cTable(title, baseColor, "usearray", tmpList2);
                     aList = tmpList.map(tinycolor);
-                } else {
+                }
+                else {
                     aList = cArray.map(tinycolor);
                 }
                 break;
@@ -144,22 +140,11 @@ Raphael(function() {
         }
         s += "</tr></table>";
         $("div.cTable").append(s);
-        //console.log(aList);
-        //console.log(aList.map(function(f) {
-        //    return f.toHexString();
-        //}));
     }
-
-    // handle click on color keys / cTable elements "TD" elevents...
-    $('.cTable').on('click', 'td', function(e) {
-        out.value = $(this).data("rgb");
-    });
 
     // onchange event handler...
     var onchange = function(item) {
         return function(clr) {
-            //console.log("onchange:");
-            //console.log(clr);
             clr = checkCalcColor(clr);
             item.color(clr);
             setDials(clr);
@@ -181,59 +166,14 @@ Raphael(function() {
         }
     };
 
-    // little helper to name mdColors into h1.innerHTML...
-    function nameColor(base, tint) {
-        var s;
-
-        s = base + " (" + tint + ")<br>" + base.toLowerCase() + " ";
-        switch (tint) {
-            case "P50":
-                s += "lighten-5";
-                break;
-            case "P100":
-                s += "lighten-4";
-                break;
-            case "P200":
-                s += "lighten-3";
-                break;
-            case "P300":
-                s += "lighten-2";
-                break;
-            case "P400":
-                s += "lighten-1";
-                break;
-            case "P500":
-                s += "";
-                break;
-            case "P600":
-                s += "darken-1";
-                break;
-            case "P700":
-                s += "darken-2";
-                break;
-            case "P800":
-                s += "darken-3";
-                break;
-            case "P900":
-                s += "darken-4";
-                break;
-            case "A100":
-                s += "accent-1";
-                break;
-            case "A200":
-                s += "accent-2";
-                break;
-            case "A400":
-                s += "accent-3";
-                break;
-            case "A500":
-                s += "accent-4";
-                break;
-            default:
-                s += "Unknown";
-        }
-        return s;
-    }
+    // handle click on color keys / cTable elements "TD" elevents...
+    $('.cTable').on('click', 'td', function(e) {
+        out.value = $(this).data("rgb");
+        var event = jQuery.Event('keypress');
+        event.which = 13;
+        event.keyCode = 13;
+        jQuery("#output").trigger(event);
+    });
 
     // filter the check boxes to see how to handle color and settings...
     function checkCalcColor(clr) {
@@ -241,8 +181,7 @@ Raphael(function() {
             // returns array of [rgbString, mdColorName, mdTinkNumber]...
             var tmp = calcColor(clr);
             clr = tmp[0];
-            //h1.innerHTML = tmp[1] + " (" + tmp[2] + ")";
-            h1.innerHTML = nameColor(tmp[1], tmp[2]);
+            h1.innerHTML = tmp[1] + " (" + tmp[2] + ")<br>" + tmp[1].toLowerCase() + " " + tmp[3];
             cp.color(clr);
             cp2.color(clr);
         }
@@ -257,14 +196,12 @@ Raphael(function() {
 
     // calculate closest color based on material color design: just primaries or all...
     function calcColor(clr) {
-        //console.log("calcColor: ", clr);
         clr = Raphael.color(clr);
-        //console.log(clr);
         var diff = Number.MAX_VALUE;
         var tDiff, closest, obj, key, tint, anRGB;
-        for (key in mdColors) {
-            if (mdColors.hasOwnProperty(key)) {
-                obj = mdColors[key];
+        for (key in mdColors.md) {
+            if (mdColors.md.hasOwnProperty(key)) {
+                obj = mdColors.md[key];
                 for (tint in obj) {
                     if (obj.hasOwnProperty(tint)) {
                         // need to fix this ... always searches all mdColors...
@@ -277,21 +214,17 @@ Raphael(function() {
                         else {
                             continue;
                         }
-                        //console.log("A Color: ", key, tint, obj[tint]);
                         tDiff = Math.sqrt(Math.pow(((clr.r - anRGB["r"])), 2) + Math.pow(((clr.g - anRGB["g"])), 2) + Math.pow(((clr.b - anRGB["b"])), 2));
-                        //console.log("compare: ", anRGB["r"] + " " + anRGB["g"] + " " + anRGB["b"]);
-                        //console.log("tDiff: ", tDiff);
                         if (tDiff < diff) {
                             diff = tDiff;
                             closest = [anRGB["r"], anRGB["g"], anRGB["b"], key, tint];
-                            //console.log("replaced:");
-                            //console.log(closest);
                         }
                     }
                 }
             }
         }
-        return ([Raphael.rgb(closest[0], closest[1], closest[2]), closest[3], closest[4]]);
+        // rgb, keyColor, tinkColor, izeLabel...
+        return ([Raphael.rgb(closest[0], closest[1], closest[2]), closest[3], closest[4], mdColors.ize[closest[4]]]);
     }
 
     // twist the little readouts...
@@ -301,6 +234,9 @@ Raphael(function() {
         out.style.background = "white";
         //out.style.color = Raphael.rgb2hsb(clr).b < .5 ? "#fff" : "#000";
         out.style.color = "black";
+        
+        colorKeys(clr);
+
         clr = Raphael.color(clr);
         vr.innerHTML = clr.r;
         vg.innerHTML = clr.g;
