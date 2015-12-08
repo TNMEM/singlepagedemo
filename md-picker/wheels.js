@@ -1,6 +1,7 @@
 Raphael(function() {
     // get the elements...
     var initialColor = "#f44336";
+    var currentFamilyMdColor = "Red";
     var out = document.getElementById("output"),
         vr = document.getElementById("vr"),
         vg = document.getElementById("vg"),
@@ -63,12 +64,30 @@ Raphael(function() {
                 for (tint in obj) {
                     if (obj.hasOwnProperty(tint)) {
                         if (tint.substr(0, 4) == "P500") {
-                            mdMainColors.push([ obj[tint], key + " (" + tint + "} materializecss: " + key.toLowerCase() + " " + mdColors.ize[tint]  ]);
+                            mdMainColors.push([obj[tint], key + " (" + tint + ") materializecss: " + key.toLowerCase() + " " + mdColors.ize[tint]]);
                         }
                     }
                 }
             }
         }
+    }
+
+    function justFamilyMdColors(colorName) {
+        var key, obj, tint;
+        var a = [];
+        for (key in mdColors.md) {
+            if (mdColors.md.hasOwnProperty(key)) {
+                obj = mdColors.md[key];
+                for (tint in obj) {
+                    if (obj.hasOwnProperty(tint)) {
+                        if (key == colorName) {
+                            a.push([obj[tint], key + " (" + tint + ") materializecss: " + key.toLowerCase() + " " + mdColors.ize[tint]]);
+                        }
+                    }
+                }
+            }
+        }
+        return a;
     }
 
     // color keys ... some from tinycolor...
@@ -81,8 +100,9 @@ Raphael(function() {
 
         $("div.cTable").append("<h4>Google Material Design main '500' colors</h4>");
         cTable("MD", baseColor, "mdarray", mdMainColors);
+        cTable("MD " + currentFamilyMdColor, baseColor, "mdarray", justFamilyMdColors(currentFamilyMdColor));
 
-        $("div.cTable").append("<h4>Standard Combinations</h4>");
+        $("div.cTable").append("<h4>Standard combinations</h4>");
         cTable("Monochromatic", baseColor, "monochromatic");
         cTable("Analogous", baseColor, "analogous");
         cTable("Complement", baseColor, "complement");
@@ -146,13 +166,17 @@ Raphael(function() {
                     var tmpList2 = cArray.slice(0, cArray.length - r);
                     cTable(title, baseColor, "mdarray", tmpList2);
                     aList = jQuery.map(tmpList, function(n, i) {
-                        return [ [tinycolor(n[0]), n[1]] ];
+                        return [
+                            [tinycolor(n[0]), n[1]]
+                        ];
                     });
                     //aList = tmpList.map(tinycolor);
                 }
                 else {
                     aList = jQuery.map(cArray, function(n, i) {
-                        return [ [tinycolor(n[0]), n[1]] ];
+                        return [
+                            [tinycolor(n[0]), n[1]]
+                        ];
                     });
                     //aList = cArray.map(tinycolor);
                 }
@@ -199,7 +223,14 @@ Raphael(function() {
 
     // handle click on color keys / cTable elements "TD" elevents...
     $('.cTable').on('click', 'th', function(e) {
+        // if "title" has a space, then it's Md color needing Family key...
+        var x = $(this).attr("title");
+        if (x.length > 0) {
+            currentFamilyMdColor = x.split(" ")[0];
+        }
+        // set the new "out" value...
         out.value = $(this).data("rgb");
+        // trigger "out" control...
         var event = jQuery.Event('keypress');
         event.which = 13;
         event.keyCode = 13;
@@ -212,9 +243,9 @@ Raphael(function() {
             // returns array of [rgbString, mdColorName, mdTinkNumber]...
             var tmp = calcColor(clr);
             clr = tmp[0];
-            h1.innerHTML = tmp[1] + " (" + tmp[2] + ")<br>" + tmp[1].toLowerCase() + " " + tmp[3];
+            h1.innerHTML = tmp[1];
             cp.color(clr);
-            cp2.color(clr);
+            //cp2.color(clr);
         }
         else {
             h1.innerHTML = "Color Picker";
@@ -245,7 +276,12 @@ Raphael(function() {
                         else {
                             continue;
                         }
-                        tDiff = Math.sqrt(Math.pow(((clr.r - anRGB["r"])), 2) + Math.pow(((clr.g - anRGB["g"])), 2) + Math.pow(((clr.b - anRGB["b"])), 2));
+                        // unweighted rgb...
+                        //tDiff = Math.sqrt(Math.pow(((clr.r - anRGB["r"])), 2) + Math.pow(((clr.g - anRGB["g"])), 2) + Math.pow(((clr.b - anRGB["b"])), 2));
+                        // weighted rgb...
+                        //tDiff = Math.sqrt(Math.pow(((clr.r - anRGB["r"])), 2) * 3 + Math.pow(((clr.g - anRGB["g"])), 2) * 4 + Math.pow(((clr.b - anRGB["b"])), 2) * 2);
+                        // special calc...
+                        tDiff = colorDistance(clr, anRGB);
                         if (tDiff < diff) {
                             diff = tDiff;
                             closest = [anRGB["r"], anRGB["g"], anRGB["b"], key, tint];
@@ -255,7 +291,21 @@ Raphael(function() {
             }
         }
         // rgb, keyColor, tinkColor, izeLabel...
-        return ([Raphael.rgb(closest[0], closest[1], closest[2]), closest[3], closest[4], mdColors.ize[closest[4]]]);
+        //return ([Raphael.rgb(closest[0], closest[1], closest[2]), closest[3], closest[4], mdColors.ize[closest[4]]]);
+        return ([ Raphael.rgb(closest[0], closest[1], closest[2]), closest[3] + " (" + closest[4] + ")<br>materializecss: " + closest[3].toLowerCase() + " " + mdColors.ize[closest[4]] ]);
+    }
+
+    // http://www.compuphase.com/cmetric.htm
+    // ... very mathy and follows human perception...
+    function colorDistance(e1, e2) {
+        var e1 = tinycolor(e1).toRgb();
+        var e2 = tinycolor(e2).toRgb();
+        var rmean = (e1.r + e2.r) / 2;
+        var r = e1.r - e2.r;
+        var g = e1.g - e2.g;
+        var b = e1.b - e2.b;
+
+        return Math.sqrt((((512 + rmean) * r * r) / 256) + 4 * g * g + (((767 - rmean) * b * b) / 256));
     }
 
     // twist the little readouts...
