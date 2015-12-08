@@ -72,6 +72,7 @@ Raphael(function() {
         }
     }
 
+    // get all the items in a family like "Red"...
     function justFamilyMdColors(colorName) {
         var key, obj, tint;
         var a = [];
@@ -90,6 +91,17 @@ Raphael(function() {
         return a;
     }
 
+    // expects an an array of [tinycolor, "description"]
+    // return new array of near-match Md colors...
+    function matchMd(c) {
+        x = jQuery.map(c, function(n, i) {
+            y = [ calcColor(tinycolor(n[0]).toRgb()) ];
+            return y;
+        });
+        console.log("x: ", x);
+        return x;
+    }
+    
     // color keys ... some from tinycolor...
     function colorKeys(baseColor) {
         $("div.cTable").empty();
@@ -122,24 +134,32 @@ Raphael(function() {
                 aList = aList.map(function(rgb) {
                     return [rgb, ""];
                 });
+                // convert array to md colors and send it to mdarray handler...
+                cTable(title + " MD", baseColor, "mdarray", matchMd(aList));
                 break;
             case ("tetrad"):
                 aList = tiny.tetrad();
                 aList = aList.map(function(rgb) {
                     return [rgb, ""];
                 });
+                // convert array to md colors and send it to mdarray handler...
+                cTable(title + " MD", baseColor, "mdarray", matchMd(aList));
                 break;
             case ("monochromatic"):
                 aList = tiny.monochromatic();
                 aList = aList.map(function(rgb) {
                     return [rgb, ""];
                 });
+                // convert array to md colors and send it to mdarray handler...
+                cTable(title + " MD", baseColor, "mdarray", matchMd(aList));
                 break;
             case ("analogous"):
                 aList = tiny.analogous();
                 aList = aList.map(function(rgb) {
                     return [rgb, ""];
                 });
+                // convert array to md colors and send it to mdarray handler...
+                cTable(title + " MD", baseColor, "mdarray", matchMd(aList));
                 break;
             case ("complement"):
                 aList = [];
@@ -148,12 +168,16 @@ Raphael(function() {
                 aList = aList.map(function(rgb) {
                     return [rgb, ""];
                 });
+                // convert array to md colors and send it to mdarray handler...
+                cTable(title + " MD", baseColor, "mdarray", matchMd(aList));
                 break;
             case ("splitcomplement"):
                 aList = tiny.splitcomplement();
                 aList = aList.map(function(rgb) {
                     return [rgb, ""];
                 });
+                // convert array to md colors and send it to mdarray handler...
+                cTable(title + " MD", baseColor, "mdarray", matchMd(aList));
                 break;
             case ("mdarray"):
                 // recursion to correct-length rows...
@@ -292,7 +316,7 @@ Raphael(function() {
         }
         // rgb, keyColor, tinkColor, izeLabel...
         //return ([Raphael.rgb(closest[0], closest[1], closest[2]), closest[3], closest[4], mdColors.ize[closest[4]]]);
-        return ([ Raphael.rgb(closest[0], closest[1], closest[2]), closest[3] + " (" + closest[4] + ")<br>materializecss: " + closest[3].toLowerCase() + " " + mdColors.ize[closest[4]] ]);
+        return ([Raphael.rgb(closest[0], closest[1], closest[2]), closest[3] + " (" + closest[4] + ") materializecss: " + closest[3].toLowerCase() + " " + mdColors.ize[closest[4]]]);
     }
 
     // http://www.compuphase.com/cmetric.htm
