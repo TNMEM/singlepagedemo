@@ -98,7 +98,6 @@ Raphael(function() {
             y = [ calcColor(tinycolor(n[0]).toRgb()) ];
             return y;
         });
-        console.log("x: ", x);
         return x;
     }
     
@@ -132,7 +131,8 @@ Raphael(function() {
             case ("triad"):
                 aList = tiny.triad();
                 aList = aList.map(function(rgb) {
-                    return [rgb, ""];
+                    return [ rgb, "" ];
+                    //return [ rgb, tinycolor.hexNames[ rgb.toHex()] ];
                 });
                 // convert array to md colors and send it to mdarray handler...
                 cTable(title + " MD", baseColor, "mdarray", matchMd(aList));
@@ -140,7 +140,8 @@ Raphael(function() {
             case ("tetrad"):
                 aList = tiny.tetrad();
                 aList = aList.map(function(rgb) {
-                    return [rgb, ""];
+                    return [ rgb, "" ];
+                    //return [ rgb, tinycolor.hexNames[ rgb.toHex()] ];
                 });
                 // convert array to md colors and send it to mdarray handler...
                 cTable(title + " MD", baseColor, "mdarray", matchMd(aList));
@@ -148,7 +149,8 @@ Raphael(function() {
             case ("monochromatic"):
                 aList = tiny.monochromatic();
                 aList = aList.map(function(rgb) {
-                    return [rgb, ""];
+                    return [ rgb, "" ];
+                    //return [ rgb, tinycolor.hexNames[ rgb.toHex()] ];
                 });
                 // convert array to md colors and send it to mdarray handler...
                 cTable(title + " MD", baseColor, "mdarray", matchMd(aList));
@@ -156,7 +158,8 @@ Raphael(function() {
             case ("analogous"):
                 aList = tiny.analogous();
                 aList = aList.map(function(rgb) {
-                    return [rgb, ""];
+                    return [ rgb, "" ];
+                    //return [ rgb, tinycolor.hexNames[ rgb.toHex()] ];
                 });
                 // convert array to md colors and send it to mdarray handler...
                 cTable(title + " MD", baseColor, "mdarray", matchMd(aList));
@@ -166,7 +169,8 @@ Raphael(function() {
                 aList.push(tiny);
                 aList.push(tiny.complement());
                 aList = aList.map(function(rgb) {
-                    return [rgb, ""];
+                    return [ rgb, "" ];
+                    //return [ rgb, tinycolor.hexNames[ rgb.toHex()] ];
                 });
                 // convert array to md colors and send it to mdarray handler...
                 cTable(title + " MD", baseColor, "mdarray", matchMd(aList));
@@ -174,7 +178,8 @@ Raphael(function() {
             case ("splitcomplement"):
                 aList = tiny.splitcomplement();
                 aList = aList.map(function(rgb) {
-                    return [rgb, ""];
+                    return [ rgb, "" ];
+                    //return [ rgb, tinycolor.hexNames[ rgb.toHex()] ];
                 });
                 // convert array to md colors and send it to mdarray handler...
                 cTable(title + " MD", baseColor, "mdarray", matchMd(aList));
@@ -211,11 +216,15 @@ Raphael(function() {
         var i, s;
         s = "<table><tr><td>" + title + "</td>";
         for (i = 0; i < aList.length; i++) {
-            s += "<th title=\"" + aList[i][1] + "\" bgcolor=\"" + aList[i][0].toHexString() + "\" data-rgb=\"" + aList[i][0].toHexString() + "\"></th>";
+            var x = tinycolor.mostReadable(
+                aList[i][0].toHexString(), 
+                ["#fafafa", "#f5f5f5", "#eeeeee", "#e0e0e0", "#bdbdbd", "#9e9e9e", "#757575", "#616161", "#424242", "#212121"], 
+                {includeFallbackColors:true}).toHexString();
+            s += "<td title=\"" + aList[i][1] + "\" bgcolor=" + aList[i][0].toHexString() + " style=\"color:" + x + ";\" data-rgb=\"" + aList[i][0].toHexString() + "\">t:" + x + "</td>";
         }
         s += "</tr><tr><td></td>";
         for (i = 0; i < aList.length; i++) {
-            s += "<td data-rgb=\"" + aList[i][0].toHexString() + "\">" + aList[i][0].toHexString() + "</td>";
+            s += "<td>c:" + aList[i][0].toHexString() + "</td>";
         }
         s += "</tr></table>";
         $("div.cTable").append(s);
@@ -246,7 +255,7 @@ Raphael(function() {
     };
 
     // handle click on color keys / cTable elements "TD" elevents...
-    $('.cTable').on('click', 'th', function(e) {
+    $('.cTable').on('click', 'td', function(e) {
         // if "title" has a space, then it's Md color needing Family key...
         var x = $(this).attr("title");
         if (x.length > 0) {
