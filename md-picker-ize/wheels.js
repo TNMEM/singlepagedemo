@@ -12,12 +12,12 @@ Raphael(function() {
         vs2 = document.getElementById("vs2"),
         vv = document.getElementById("vv"),
         vl = document.getElementById("vl"),
-        h1 = document.getElementById("h1"),
         mdc = document.getElementById("mdColorsChk"),
         mdm = document.getElementById("mdMainChk"),
+        mh = document.getElementById("mainhed"),
         // create colorpicker...
-        cp = Raphael.colorpicker(40, 20, 300, initialColor),
-        cp2 = Raphael.colorwheel(360, 20, 300, initialColor),
+        cp = Raphael.colorpicker(40, 20, 300, initialColor, xcp),
+        cp2 = Raphael.colorwheel(360, 20, 300, initialColor, xcp2),
         clr = Raphael.color(initialColor);
     // set initial values...
     out.value = initialColor;
@@ -28,7 +28,7 @@ Raphael(function() {
     vs.innerHTML = vs2.innerHTML = Math.round(clr.s * 100) + "%";
     vv.innerHTML = Math.round(clr.v * 100) + "%";
     vl.innerHTML = Math.round(clr.l * 100) + "%";
-    h1.innerHTML = "Color Picker";
+    mh.innerHTML = "Color Picker";
 
     // get the json file with the material design mdColors
     // ... this is a javascript object ...
@@ -106,14 +106,15 @@ Raphael(function() {
         $("div.cTable").empty();
 
         $("div.cTable").append(
-            "<p>Click any color to change the base used in combinations.</p>"
+            "<h5>Click any color to change the base used in combinations.</h5>"
         );
 
-        $("div.cTable").append("<h4>Google Material Design main '500' colors</h4>");
+        $("div.cTable").append("<h6>Google Material Design main '500' colors</h6>");
         cTable("MD", baseColor, "mdarray", mdMainColors);
+        $("div.cTable").append("<h6>Currently Selected MD Family</h6>");
         cTable("MD " + currentFamilyMdColor, baseColor, "mdarray", justFamilyMdColors(currentFamilyMdColor));
 
-        $("div.cTable").append("<h4>Standard combinations</h4>");
+        $("div.cTable").append("<h6>Standard combinations</h6>");
         cTable("Monochromatic", baseColor, "monochromatic");
         cTable("Analogous", baseColor, "analogous");
         cTable("Complement", baseColor, "complement");
@@ -214,7 +215,7 @@ Raphael(function() {
                 break;
         }
         var i, s;
-        s = "<table><tr><td>" + title + "</td>";
+        s = "<table><thead></thead><tbody><tr><td>" + title + "</td>";
         for (i = 0; i < aList.length; i++) {
             var x = tinycolor.mostReadable(
                 aList[i][0].toHexString(), 
@@ -226,7 +227,7 @@ Raphael(function() {
         for (i = 0; i < aList.length; i++) {
             s += "<td>c:" + aList[i][0].toHexString() + "</td>";
         }
-        s += "</tr></table>";
+        s += "</tr></tbody></table>";
         $("div.cTable").append(s);
     }
 
@@ -276,12 +277,12 @@ Raphael(function() {
             // returns array of [rgbString, mdColorName, mdTinkNumber]...
             var tmp = calcColor(clr);
             clr = tmp[0];
-            h1.innerHTML = tmp[1];
+            mh.innerHTML = tmp[1];
             cp.color(clr);
             //cp2.color(clr);
         }
         else {
-            h1.innerHTML = "Color Picker";
+            mh.innerHTML = "Color Picker";
             // don't need this since no color changes...
             //cp.color(clr);
             //cp2.color(clr);
