@@ -16,11 +16,15 @@ Raphael(function() {
         mdm = document.getElementById("mdMainChk"),
         mh = document.getElementById("mainhed"),
         // create colorpicker...
-        cp = Raphael.colorpicker(40, 20, 300, initialColor, xcp),
-        cp2 = Raphael.colorwheel(360, 20, 300, initialColor, xcp2),
+        cp = Raphael.colorpicker(0, 0, 0, initialColor, xcp),
+        cp2 = Raphael.colorwheel(0, 0, 0, initialColor, xcp2),
         clr = Raphael.color(initialColor);
     // set initial values...
     out.value = initialColor;
+    $("#colorbox").css({
+        "background-color": initialColor,
+        "color": initialColor
+    });
     vr.innerHTML = clr.r;
     vg.innerHTML = clr.g;
     vb.innerHTML = clr.b;
@@ -28,7 +32,7 @@ Raphael(function() {
     vs.innerHTML = vs2.innerHTML = Math.round(clr.s * 100) + "%";
     vv.innerHTML = Math.round(clr.v * 100) + "%";
     vl.innerHTML = Math.round(clr.l * 100) + "%";
-    mh.innerHTML = "Color Picker";
+    mh.innerHTML = "Color Not Material";
 
     // get the json file with the material design mdColors
     // ... this is a javascript object ...
@@ -95,18 +99,18 @@ Raphael(function() {
     // return new array of near-match Md colors...
     function matchMd(c) {
         x = jQuery.map(c, function(n, i) {
-            y = [ calcColor(tinycolor(n[0]).toRgb()) ];
+            y = [calcColor(tinycolor(n[0]).toRgb())];
             return y;
         });
         return x;
     }
-    
+
     // color keys ... some from tinycolor...
     function colorKeys(baseColor) {
         $("div.cTable").empty();
 
         $("div.cTable").append(
-            "<h5>Click any color to change the base used in combinations.</h5>"
+            "<h5>Click any color below to change the base used in combinations.</h5>"
         );
 
         $("div.cTable").append("<h6>Google Material Design main '500' colors</h6>");
@@ -132,7 +136,7 @@ Raphael(function() {
             case ("triad"):
                 aList = tiny.triad();
                 aList = aList.map(function(rgb) {
-                    return [ rgb, "" ];
+                    return [rgb, ""];
                     //return [ rgb, tinycolor.hexNames[ rgb.toHex()] ];
                 });
                 // convert array to md colors and send it to mdarray handler...
@@ -141,7 +145,7 @@ Raphael(function() {
             case ("tetrad"):
                 aList = tiny.tetrad();
                 aList = aList.map(function(rgb) {
-                    return [ rgb, "" ];
+                    return [rgb, ""];
                     //return [ rgb, tinycolor.hexNames[ rgb.toHex()] ];
                 });
                 // convert array to md colors and send it to mdarray handler...
@@ -150,7 +154,7 @@ Raphael(function() {
             case ("monochromatic"):
                 aList = tiny.monochromatic();
                 aList = aList.map(function(rgb) {
-                    return [ rgb, "" ];
+                    return [rgb, ""];
                     //return [ rgb, tinycolor.hexNames[ rgb.toHex()] ];
                 });
                 // convert array to md colors and send it to mdarray handler...
@@ -159,7 +163,7 @@ Raphael(function() {
             case ("analogous"):
                 aList = tiny.analogous();
                 aList = aList.map(function(rgb) {
-                    return [ rgb, "" ];
+                    return [rgb, ""];
                     //return [ rgb, tinycolor.hexNames[ rgb.toHex()] ];
                 });
                 // convert array to md colors and send it to mdarray handler...
@@ -170,7 +174,7 @@ Raphael(function() {
                 aList.push(tiny);
                 aList.push(tiny.complement());
                 aList = aList.map(function(rgb) {
-                    return [ rgb, "" ];
+                    return [rgb, ""];
                     //return [ rgb, tinycolor.hexNames[ rgb.toHex()] ];
                 });
                 // convert array to md colors and send it to mdarray handler...
@@ -179,7 +183,7 @@ Raphael(function() {
             case ("splitcomplement"):
                 aList = tiny.splitcomplement();
                 aList = aList.map(function(rgb) {
-                    return [ rgb, "" ];
+                    return [rgb, ""];
                     //return [ rgb, tinycolor.hexNames[ rgb.toHex()] ];
                 });
                 // convert array to md colors and send it to mdarray handler...
@@ -218,14 +222,14 @@ Raphael(function() {
         s = "<table><thead></thead><tbody><tr><td>" + title + "</td>";
         for (i = 0; i < aList.length; i++) {
             var x = tinycolor.mostReadable(
-                aList[i][0].toHexString(), 
-                ["#fafafa", "#f5f5f5", "#eeeeee", "#e0e0e0", "#bdbdbd", "#9e9e9e", "#757575", "#616161", "#424242", "#212121"], 
-                {includeFallbackColors:true}).toHexString();
-            s += "<td title=\"" + aList[i][1] + "\" bgcolor=" + aList[i][0].toHexString() + " style=\"color:" + x + ";\" data-rgb=\"" + aList[i][0].toHexString() + "\">t:" + x + "</td>";
+                aList[i][0].toHexString(), ["#fafafa", "#f5f5f5", "#eeeeee", "#e0e0e0", "#bdbdbd", "#9e9e9e", "#757575", "#616161", "#424242", "#212121"], {
+                    includeFallbackColors: true
+                }).toHexString();
+            s += "<td title=\"" + aList[i][1] + "\" bgcolor=" + aList[i][0].toHexString() + " style=\"color:" + x + ";\" data-rgb=\"" + aList[i][0].toHexString() + "\">" + x + "</td>";
         }
         s += "</tr><tr><td></td>";
         for (i = 0; i < aList.length; i++) {
-            s += "<td>c:" + aList[i][0].toHexString() + "</td>";
+            s += "<td>" + aList[i][0].toHexString() + "</td>";
         }
         s += "</tr></tbody></table>";
         $("div.cTable").append(s);
@@ -257,18 +261,26 @@ Raphael(function() {
 
     // handle click on color keys / cTable elements "TD" elevents...
     $('.cTable').on('click', 'td', function(e) {
+        var aTitle, aBgcolor, aColor;
         // if "title" has a space, then it's Md color needing Family key...
         var x = $(this).attr("title");
         if (x.length > 0) {
             currentFamilyMdColor = x.split(" ")[0];
         }
-        // set the new "out" value...
+        // set the new "out" value and trigger it ... should be synchronous ...
         out.value = $(this).data("rgb");
         // trigger "out" control...
         var event = jQuery.Event('keypress');
         event.which = 13;
         event.keyCode = 13;
         jQuery("#output").trigger(event);
+        // set the colorbox text to bgcolor and title of clicked...
+        aTitle = $(this).attr("title");
+        aBgcolor = $(this).attr("bgcolor");
+        aColor = $(this).css("color");
+        $("#colorbox").css("color", aColor);
+        //alert(aBgcolor + "<br>" + aTitle);
+        $("#colorbox").html("<br>" + aBgcolor + "<br><br>" + aTitle + "<br>");
     });
 
     // filter the check boxes to see how to handle color and settings...
@@ -282,7 +294,7 @@ Raphael(function() {
             //cp2.color(clr);
         }
         else {
-            mh.innerHTML = "Color Picker";
+            mh.innerHTML = "Color Not Material";
             // don't need this since no color changes...
             //cp.color(clr);
             //cp2.color(clr);
@@ -345,6 +357,10 @@ Raphael(function() {
     // twist the little readouts...
     function setDials(clr) {
         out.value = clr.replace(/^#(.)\1(.)\2(.)\3$/, "#$1$2$3");
+        $("#colorbox").css({
+            "background-color": clr,
+            "color": clr
+        });
         //out.style.background = clr;
         out.style.background = "white";
         //out.style.color = Raphael.rgb2hsb(clr).b < .5 ? "#fff" : "#000";
