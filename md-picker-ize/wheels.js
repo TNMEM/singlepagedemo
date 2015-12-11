@@ -15,16 +15,14 @@ Raphael(function() {
         mdc = document.getElementById("mdColorsChk"),
         mdm = document.getElementById("mdMainChk"),
         mh = document.getElementById("mainhed"),
-        // create colorpicker...
-        cp = Raphael.colorpicker(0, 0, 0, initialColor, xcp),
-        cp2 = Raphael.colorwheel(0, 0, 0, initialColor, xcp2),
+        xcp = document.getElementById("xcp"),
+        xcp2 = document.getElementById("xcp2"),
         clr = Raphael.color(initialColor);
+        // create colorpicker...
+        fixPickers(initialColor);
+
     // set initial values...
     out.value = initialColor;
-    $("#colorbox").css({
-        "background-color": initialColor,
-        "color": initialColor
-    });
     vr.innerHTML = clr.r;
     vg.innerHTML = clr.g;
     vb.innerHTML = clr.b;
@@ -32,7 +30,24 @@ Raphael(function() {
     vs.innerHTML = vs2.innerHTML = Math.round(clr.s * 100) + "%";
     vv.innerHTML = Math.round(clr.v * 100) + "%";
     vl.innerHTML = Math.round(clr.l * 100) + "%";
-    mh.innerHTML = "Color Not Material";
+    mh.innerHTML = "Pickers Not Locked";
+
+// since the color pickers are not really connected to div must resize when window changes
+// ... remove() has a raphael error so sidestep with try/catch...
+$( window ).resize(function() {
+    fixPickers();
+});
+// here's the function...
+function fixPickers(clr) {
+    try {
+        cp.remove();
+    } catch (err) {}
+    try {
+        cp2.remove();
+    } catch (err) {}
+        cp = Raphael.colorpicker(xcp.getBoundingClientRect().left + 20, xcp.getBoundingClientRect().top - 30, 200, clr),
+        cp2 = Raphael.colorwheel(xcp2.getBoundingClientRect().left + 20, xcp2.getBoundingClientRect().top - 30, 200, clr);
+}
 
     // get the json file with the material design mdColors
     // ... this is a javascript object ...
@@ -178,7 +193,10 @@ Raphael(function() {
                     //return [ rgb, tinycolor.hexNames[ rgb.toHex()] ];
                 });
                 // convert array to md colors and send it to mdarray handler...
-                cTable(title + " MD", baseColor, "mdarray", matchMd(aList));
+                var x = matchMd(aList);
+                $("#colorbg1").css("background-color", x[0][0]);
+                $("#colorbg2").css("background-color", x[1][0]);
+                cTable(title + " MD", baseColor, "mdarray", x);
                 break;
             case ("splitcomplement"):
                 aList = tiny.splitcomplement();
@@ -221,10 +239,7 @@ Raphael(function() {
         var i, s;
         s = "<table><thead></thead><tbody><tr><td>" + title + "</td>";
         for (i = 0; i < aList.length; i++) {
-            var x = tinycolor.mostReadable(
-                aList[i][0].toHexString(), ["#fafafa", "#f5f5f5", "#eeeeee", "#e0e0e0", "#bdbdbd", "#9e9e9e", "#757575", "#616161", "#424242", "#212121"], {
-                    includeFallbackColors: true
-                }).toHexString();
+            var x = findReadable(aList[i][0].toHexString());
             s += "<td title=\"" + aList[i][1] + "\" bgcolor=" + aList[i][0].toHexString() + " style=\"color:" + x + ";\" data-rgb=\"" + aList[i][0].toHexString() + "\">" + x + "</td>";
         }
         s += "</tr><tr><td></td>";
@@ -233,6 +248,14 @@ Raphael(function() {
         }
         s += "</tr></tbody></table>";
         $("div.cTable").append(s);
+    }
+
+    // find a readable text color...
+    function findReadable(clr) {
+        return tinycolor.mostReadable(
+            clr, ["#fafafa", "#f5f5f5", "#eeeeee", "#e0e0e0", "#bdbdbd", "#9e9e9e", "#757575", "#616161", "#424242", "#212121"], {
+                includeFallbackColors: true
+            }).toHexString();
     }
 
     // onchange event handler...
@@ -276,11 +299,13 @@ Raphael(function() {
         jQuery("#output").trigger(event);
         // set the colorbox text to bgcolor and title of clicked...
         aTitle = $(this).attr("title");
-        aBgcolor = $(this).attr("bgcolor");
         aColor = $(this).css("color");
-        $("#colorbox").css("color", aColor);
-        //alert(aBgcolor + "<br>" + aTitle);
-        $("#colorbox").html("<br>" + aBgcolor + "<br><br>" + aTitle + "<br>");
+        aBgcolor = $(this).attr("bgcolor");
+        $("#colorbox").css({
+            "color": aColor,
+            "background-color": aBgcolor
+        });
+        $("#colorbox").html("Clicked Color...<br>Background: " + aBgcolor + "; Text: " + tinycolor(aColor).toHexString() + "<br><br>" + aTitle + "<br>");
     });
 
     // filter the check boxes to see how to handle color and settings...
@@ -294,7 +319,7 @@ Raphael(function() {
             //cp2.color(clr);
         }
         else {
-            mh.innerHTML = "Color Not Material";
+            mh.innerHTML = "Pickers Not Locked";
             // don't need this since no color changes...
             //cp.color(clr);
             //cp2.color(clr);
@@ -357,10 +382,6 @@ Raphael(function() {
     // twist the little readouts...
     function setDials(clr) {
         out.value = clr.replace(/^#(.)\1(.)\2(.)\3$/, "#$1$2$3");
-        $("#colorbox").css({
-            "background-color": clr,
-            "color": clr
-        });
         //out.style.background = clr;
         out.style.background = "white";
         //out.style.color = Raphael.rgb2hsb(clr).b < .5 ? "#fff" : "#000";
