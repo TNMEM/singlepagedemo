@@ -15,14 +15,12 @@ Raphael(function() {
         mdc = document.getElementById("mdColorsChk"),
         mdm = document.getElementById("mdMainChk"),
         mh = document.getElementById("mainhed"),
-        xcp = document.getElementById("xcp"),
-        xcp2 = document.getElementById("xcp2"),
         clr = Raphael.color(initialColor);
-        // create colorpicker...
-        fixPickers(initialColor);
+
+    // this will become color picker...
+    var cp;
 
     // set initial values...
-    out.value = initialColor;
     vr.innerHTML = clr.r;
     vg.innerHTML = clr.g;
     vb.innerHTML = clr.b;
@@ -30,24 +28,7 @@ Raphael(function() {
     vs.innerHTML = vs2.innerHTML = Math.round(clr.s * 100) + "%";
     vv.innerHTML = Math.round(clr.v * 100) + "%";
     vl.innerHTML = Math.round(clr.l * 100) + "%";
-    mh.innerHTML = "Pickers Not Locked";
-
-// since the color pickers are not really connected to div must resize when window changes
-// ... remove() has a raphael error so sidestep with try/catch...
-$( window ).resize(function() {
-    fixPickers();
-});
-// here's the function...
-function fixPickers(clr) {
-    try {
-        cp.remove();
-    } catch (err) {}
-    try {
-        cp2.remove();
-    } catch (err) {}
-        cp = Raphael.colorpicker(xcp.getBoundingClientRect().left + 20, xcp.getBoundingClientRect().top - 30, 200, clr),
-        cp2 = Raphael.colorwheel(xcp2.getBoundingClientRect().left + 20, xcp2.getBoundingClientRect().top - 30, 200, clr);
-}
+    mh.innerHTML = "Picker Not Locked";
 
     // get the json file with the material design mdColors
     // ... this is a javascript object ...
@@ -65,9 +46,17 @@ function fixPickers(clr) {
         gc.done(function(response) {
             console.log('gc.done:');
             console.log(response);
+            // get colors ready...
             mdColors = response;
             justMdMainColors();
             colorKeys(initialColor);
+            // get picker ready ...
+            cp = new jscolor.color(out);
+            cp.fromString(initialColor);
+            cp.hash = true;
+            // get onImmediateChange handler ready...
+            cp.onImmediateChange = onchange();
+            cp.importColor();
         });
     })();
 
@@ -195,7 +184,9 @@ function fixPickers(clr) {
                 // convert array to md colors and send it to mdarray handler...
                 var x = matchMd(aList);
                 $("#colorbg1").css("background-color", x[0][0]);
+                $("#colorbg1").attr("title", x[0][1] + " (" + x[0][0] + ")");
                 $("#colorbg2").css("background-color", x[1][0]);
+                $("#colorbg2").attr("title", x[1][1] + " (" + x[1][0] + ")");
                 cTable(title + " MD", baseColor, "mdarray", x);
                 break;
             case ("splitcomplement"):
@@ -259,26 +250,31 @@ function fixPickers(clr) {
     }
 
     // onchange event handler...
-    var onchange = function(item) {
-        return function(clr) {
-            clr = checkCalcColor(clr);
-            item.color(clr);
-            setDials(clr);
+    // this dispatches onImmediateChange, but it causes a loop at this handler...
+    //cp.jsChange();
+    var onchange = function() {
+        return function() {
+            var c = $("#output").val();
+            if (c.substring(0, 1) != "#")
+                c += "#";
+            console.log("c1: ", c);
+            c = checkCalcColor(c);
+            if (c.substring(0, 1) != "#")
+                c += "#";
+            console.log("c2: ", c);
+            $("#output").val(c);
+            // don't have to import color...
+            //cp.importColor();
+            setDials(c);
         };
     };
-    // handle color pickers...
-    cp.onchange = onchange(cp2);
-    cp2.onchange = onchange(cp);
 
-    // handle hex/name box...
+    // handle enter key on output...
     out.onkeypress = function(event) {
         // trigger on enter key...
         var x = event.which || event.keyCode;
         if (x == 13) {
-            clr = checkCalcColor(this.value);
-            cp.color(clr);
-            cp2.color(clr);
-            setDials(clr);
+
         }
     };
 
@@ -290,7 +286,7 @@ function fixPickers(clr) {
         if (x.length > 0) {
             currentFamilyMdColor = x.split(" ")[0];
         }
-        // set the new "out" value and trigger it ... should be synchronous ...
+        // set the new "out" value...
         out.value = $(this).data("rgb");
         // trigger "out" control...
         var event = jQuery.Event('keypress');
@@ -305,6 +301,9 @@ function fixPickers(clr) {
             "color": aColor,
             "background-color": aBgcolor
         });
+        $("output").val(aBgcolor);
+        cp.importColor();
+        cp.jsChange();
         $("#colorbox").html("Clicked Color...<br>Background: " + aBgcolor + "; Text: " + tinycolor(aColor).toHexString() + "<br><br>" + aTitle + "<br>");
     });
 
@@ -315,14 +314,10 @@ function fixPickers(clr) {
             var tmp = calcColor(clr);
             clr = tmp[0];
             mh.innerHTML = tmp[1];
-            cp.color(clr);
-            //cp2.color(clr);
+            //cp.color(clr);
         }
         else {
-            mh.innerHTML = "Pickers Not Locked";
-            // don't need this since no color changes...
-            //cp.color(clr);
-            //cp2.color(clr);
+            mh.innerHTML = "Picker Not Locked";
         }
         return clr;
     }
@@ -381,11 +376,11 @@ function fixPickers(clr) {
 
     // twist the little readouts...
     function setDials(clr) {
-        out.value = clr.replace(/^#(.)\1(.)\2(.)\3$/, "#$1$2$3");
+        //out.value = clr.replace(/^#(.)\1(.)\2(.)\3$/, "#$1$2$3");
         //out.style.background = clr;
-        out.style.background = "white";
+        //out.style.background = "white";
         //out.style.color = Raphael.rgb2hsb(clr).b < .5 ? "#fff" : "#000";
-        out.style.color = "black";
+        //out.style.color = "black";
 
         colorKeys(clr);
 
