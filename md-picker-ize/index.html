@@ -21,6 +21,17 @@
       padding: 5px;
     }
     
+    #cHistory ul {
+      background: #212121;
+      padding: 2px;
+      height: 200px;
+      overflow: scroll;
+    }
+    
+    #cHistory ul li {
+      margin: 3px;
+    }
+    
     .cTable td {
       padding: 8px;
       font-size: .7em;
@@ -83,11 +94,16 @@
               <a href="http://bgrins.github.io/TinyColor/" target="_blank">TinyColor</a> and
               <a href="http://materializecss.com/" target="_blank">materializecss</a>
             </p>
+              Click History:
+              <br>
             <div id="colorbox">
+            </div>
+            <div id="cHistory">
+              <ul></ul>
             </div>
           </div>
         </div>
- 
+
         <div class="col s12 m6">
           <h5 id="mainhed"></h5>
           <p id="copy">
@@ -98,6 +114,8 @@
             <label for="mdMainChk">&nbsp;Limit&nbsp;to&nbsp;Main&nbsp;'500'&nbsp;Colors</label>
             <br>
           </p>
+            Picker Values:
+            <br>
           <table id="values">
             <thead></thead>
             <tbody>
@@ -180,10 +198,10 @@
   <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
   <script src="js/materialize.js"></script>
   <script src="js/init.js"></script>
-  <script src="raphael.js"></script>
+  <script src="libs/raphael.js"></script>
+  <script src='libs/tinycolor.js'></script>
+  <script src="libs/jscolor.js"></script>
   <script src="wheels.js"></script>
-  <script src='tinycolor.js'></script>
-  <script src="jscolor/jscolor.js"></script>
 
 </body>
 

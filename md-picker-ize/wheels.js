@@ -257,11 +257,11 @@ Raphael(function() {
             var c = $("#output").val();
             if (c.substring(0, 1) != "#")
                 c += "#";
-            console.log("c1: ", c);
+            //console.log("c1: ", c);
             c = checkCalcColor(c);
             if (c.substring(0, 1) != "#")
                 c += "#";
-            console.log("c2: ", c);
+            //console.log("c2: ", c);
             $("#output").val(c);
             // don't have to import color...
             //cp.importColor();
@@ -297,14 +297,16 @@ Raphael(function() {
         aTitle = $(this).attr("title");
         aColor = $(this).css("color");
         aBgcolor = $(this).attr("bgcolor");
-        $("#colorbox").css({
+        /*$("#colorbox").css({
             "color": aColor,
             "background-color": aBgcolor
-        });
+        });*/
+        //$("#colorbox").html("Clicked Color...<br>Background: " + aBgcolor + "; Text: " + tinycolor(aColor).toHexString() + "<br><br>" + aTitle + "<br>");
+        $("#cHistory ul").prepend("<li style=\"background-color:" + aBgcolor + "; color:" + aColor + "\">Text: " + tinycolor(aColor).toHexString() + ": Background: " + aBgcolor + " " + aTitle +"</li>");
+        // update the picker...
         $("output").val(aBgcolor);
         cp.importColor();
         cp.jsChange();
-        $("#colorbox").html("Clicked Color...<br>Background: " + aBgcolor + "; Text: " + tinycolor(aColor).toHexString() + "<br><br>" + aTitle + "<br>");
     });
 
     // filter the check boxes to see how to handle color and settings...
