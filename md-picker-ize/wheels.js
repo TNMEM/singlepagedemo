@@ -28,7 +28,7 @@ Raphael(function() {
     vs.innerHTML = vs2.innerHTML = Math.round(clr.s * 100) + "%";
     vv.innerHTML = Math.round(clr.v * 100) + "%";
     vl.innerHTML = Math.round(clr.l * 100) + "%";
-    mh.innerHTML = "Picker Not Locked";
+    mh.innerHTML = "Picker Not Locked to Material Colors";
 
     // get the json file with the material design mdColors
     // ... this is a javascript object ...
@@ -117,18 +117,18 @@ Raphael(function() {
             "<h5>Click any color below to change the base used in combinations.</h5>"
         );
 
-        $("div.cTable").append("<h6>Google Material Design main '500' colors</h6>");
+        $("div.cTable").append("<h6><em>Google Material Design main '500' colors</em></h6>");
         cTable("MD", baseColor, "mdarray", mdMainColors);
-        $("div.cTable").append("<h6>Currently Selected MD Family</h6>");
+        $("div.cTable").append("<h6><em>Currently Selected MD Family</em></h6>");
         cTable("MD " + currentFamilyMdColor, baseColor, "mdarray", justFamilyMdColors(currentFamilyMdColor));
 
-        $("div.cTable").append("<h6>Standard combinations</h6>");
-        cTable("Monochromatic", baseColor, "monochromatic");
-        cTable("Analogous", baseColor, "analogous");
+        $("div.cTable").append("<h6><em>Standard combinations</em></h6>");
         cTable("Complement", baseColor, "complement");
         cTable("Split Complement", baseColor, "splitcomplement");
         cTable("Triad", baseColor, "triad");
         cTable("Tetrad", baseColor, "tetrad");
+        cTable("Monochromatic", baseColor, "monochromatic");
+        cTable("Analogous", baseColor, "analogous");
     }
 
     // do the cTable fills ... arrays expected [rgb, description] ...
@@ -185,8 +185,18 @@ Raphael(function() {
                 var x = matchMd(aList);
                 $("#colorbg1").css("background-color", x[0][0]);
                 $("#colorbg1").attr("title", x[0][1] + " (" + x[0][0] + ")");
+                
+                $("#helpnav").empty();
+                $("#helpnav").append("<li>Top Nav: " + x[0][1] + " (" + x[0][0] + ")</li>");
+                $("#helpside").empty();
+                $("#helpside").append("<li>Top Nav: " + x[0][1] + " (" + x[0][0] + ")</li>");
+                
                 $("#colorbg2").css("background-color", x[1][0]);
                 $("#colorbg2").attr("title", x[1][1] + " (" + x[1][0] + ")");
+                
+                $("#helpnav").append("<li>Footer: " + x[1][1] + " (" + x[1][0] + ")</li>");
+                $("#helpside").append("<li>Footer: " + x[1][1] + " (" + x[1][0] + ")</li>");
+                
                 cTable(title + " MD", baseColor, "mdarray", x);
                 break;
             case ("splitcomplement"):
@@ -250,8 +260,7 @@ Raphael(function() {
     }
 
     // onchange event handler...
-    // this dispatches onImmediateChange, but it causes a loop at this handler...
-    //cp.jsChange();
+    // cp.jsChange() will fire this handler from code I added in jscolor.js...
     var onchange = function() {
         return function() {
             var c = $("#output").val();
@@ -259,8 +268,8 @@ Raphael(function() {
                 c += "#";
             //console.log("c1: ", c);
             c = checkCalcColor(c);
-            if (c.substring(0, 1) != "#")
-                c += "#";
+            //if (c.substring(0, 1) != "#")
+            //    c = "#" + c;
             //console.log("c2: ", c);
             $("#output").val(c);
             // don't have to import color...
@@ -278,6 +287,17 @@ Raphael(function() {
         }
     };
 
+    // handle click on history / cHistory li elements...
+    $('#cHistory > ul').on('click', '> li', function(e) {
+        // update the picker with the new clicked color...
+        var x = Raphael.color($(this).css("background-color")).hex;
+        console.log("x: ", x);
+        $("#output").val(x);
+        cp.importColor();
+        // fire dispatchImmediateChange() in jscolor.js...
+        cp.jsChange();
+    });
+
     // handle click on color keys / cTable elements "TD" elevents...
     $('.cTable').on('click', 'td', function(e) {
         var aTitle, aBgcolor, aColor;
@@ -286,26 +306,15 @@ Raphael(function() {
         if (x.length > 0) {
             currentFamilyMdColor = x.split(" ")[0];
         }
-        // set the new "out" value...
-        out.value = $(this).data("rgb");
-        // trigger "out" control...
-        var event = jQuery.Event('keypress');
-        event.which = 13;
-        event.keyCode = 13;
-        jQuery("#output").trigger(event);
-        // set the colorbox text to bgcolor and title of clicked...
+        // set the history of clicked...
         aTitle = $(this).attr("title");
         aColor = $(this).css("color");
         aBgcolor = $(this).attr("bgcolor");
-        /*$("#colorbox").css({
-            "color": aColor,
-            "background-color": aBgcolor
-        });*/
-        //$("#colorbox").html("Clicked Color...<br>Background: " + aBgcolor + "; Text: " + tinycolor(aColor).toHexString() + "<br><br>" + aTitle + "<br>");
         $("#cHistory ul").prepend("<li style=\"background-color:" + aBgcolor + "; color:" + aColor + "\">Text: " + tinycolor(aColor).toHexString() + ": Background: " + aBgcolor + " " + aTitle +"</li>");
-        // update the picker...
-        $("output").val(aBgcolor);
+        // update the picker with the new clicked color...
+        $("#output").val(aBgcolor);
         cp.importColor();
+        // fire dispatchImmediateChange() in jscolor.js...
         cp.jsChange();
     });
 
@@ -319,7 +328,7 @@ Raphael(function() {
             //cp.color(clr);
         }
         else {
-            mh.innerHTML = "Picker Not Locked";
+            mh.innerHTML = "Picker Not Locked to Material Colors";
         }
         return clr;
     }
