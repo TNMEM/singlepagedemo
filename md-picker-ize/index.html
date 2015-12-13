@@ -13,6 +13,10 @@
   <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection" />
   <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
   <style>
+    .fText {
+      color: white;
+    }
+    
     #cHistory ul {
       background: #212121;
       padding: 2px;
@@ -38,20 +42,20 @@
 
 <body>
   <!-- #f44336 is the same as materializecss red -->
-  <nav id="colorbg1" style="background-color:#f44336" role="navigation">
+  <nav id="navcolor" style="background-color:#f44336" role="navigation">
     <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">M.D.C.P.</a>
       <ul class="right hide-on-med-and-down">
-        <li><a class='dropdown-button' href="#" data-activates='helpnav'><i class="mdi-action-help"></i></a></li>
+        <li><a class='dropdown-button btn-floating btn-large waves-effect waves-light black' href="#" data-activates='helpnav'><i class="material-icons">help</i></a></li>
       </ul>
       <ul id='helpnav' class='dropdown-content'>
       </ul>
 
       <ul id="nav-mobile" class="side-nav">
-        <li><a class='dropdown-button' href="#" data-activates='helpside'><i class="mdi-action-help"></i></a></li>
+        <li><a class='dropdown-button btn-large waves-effect waves-light white' href="#" data-activates='helpside'><i class="material-icons">help</i></a></li>
       </ul>
       <ul id='helpside' class='dropdown-content'>
       </ul>
-      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+      <a href="#" data-activates="nav-mobile" class="button-collapse black"><i class="material-icons">menu</i></a>
     </div>
   </nav>
 
@@ -71,7 +75,8 @@
           <input id="output" value="#f44336"> ...&nbsp;Pick&nbsp;a&nbsp;Color
         </div>
         <div>
-        Powered by <a href="http://jscolor.com/examples/" target="_blank">jscolor</a>,
+        Powered by  <a href="https://www.google.com/design/spec/style/color.html" target="_blank">Google Material Design</a>,
+        <a href="http://jscolor.com/examples/" target="_blank">jscolor</a>,
         <a href="http://raphaeljs.com/" target="_blank">Raphaël</a>,
         <a href="http://bgrins.github.io/TinyColor/" target="_blank">TinyColor</a>,
         <a href="http://materializecss.com/" target="_blank">materializecss</a>
@@ -160,42 +165,42 @@
       </div>
     </div>
     <!-- #f44336 is the same as materialize cyan lighten-2 -->
-    <footer id="colorbg2" style="background-color:#f44336" class="page-footer">
+    <footer id="footcolor" style="background-color:#f44336" class="page-footer">
       <div class="container">
         <div class="row">
           <div class="col l6 s12">
-            <h5 class="white-text">Company Bio</h5>
-            <p class="grey-text text-lighten-4">We are a team of college students working on this project like it's our full time job. Any amount would help support and continue development on this project and is greatly appreciated.</p>
-
+            <h5 class="fText">What to do</h5>
+            <p class="fText">
+              Setting the "Pick a Color" or clicking any of the color key bars sets it as the main first color in
+              "standard combinations" (the "MD" bars display closest Material-Design palette matches) and puts that pick in "history."
+              The top nav and the footer are set to the two colors of the new "Complement MD."
+            </p>
 
           </div>
           <div class="col l3 s12">
-            <h5 class="white-text">Settings</h5>
-            <ul>
-              <li><a class="white-text" href="#!">Link 1</a></li>
-              <li><a class="white-text" href="#!">Link 2</a></li>
-              <li><a class="white-text" href="#!">Link 3</a></li>
-              <li><a class="white-text" href="#!">Link 4</a></li>
-            </ul>
-          </div>
+            <h5 class="fText">Check Boxes</h5>
+            <p class="fText">
+              "Lock" doesn't allow non-Material-Color.
+              </p>
+              <p class="fText">
+              "Limit" further restricts to "500" Material Colors
+            </p>
+            </div>
           <div class="col l3 s12">
-            <h5 class="white-text">Connect</h5>
-            <ul>
-              <li><a class="white-text" href="#!">Link 1</a></li>
-              <li><a class="white-text" href="#!">Link 2</a></li>
-              <li><a class="white-text" href="#!">Link 3</a></li>
-              <li><a class="white-text" href="#!">Link 4</a></li>
-            </ul>
+            <h5 class="fText">Have fun</h5>
+            <p class="fText">
+              Question: How do Google's Material Design colors relate to "standard"
+              color-theory combinations like Comlement and Triad? Pay around and have fun.
+              </p>
           </div>
         </div>
       </div>
       <div class="footer-copyright">
         <div class="container">
-          Made by <a class="orange-text text-lighten-3" href="http://materializecss.com">Materialize</a>
+          Design template made by <a class="fText" href="http://materializecss.com">Materialize</a>
         </div>
       </div>
     </footer>
-
 
     <!--  Scripts-->
     <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>

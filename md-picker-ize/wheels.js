@@ -57,6 +57,7 @@ Raphael(function() {
             // get onImmediateChange handler ready...
             cp.onImmediateChange = onchange();
             cp.importColor();
+            cp.jsChange();
         });
     })();
 
@@ -114,10 +115,10 @@ Raphael(function() {
         $("div.cTable").empty();
 
         $("div.cTable").append(
-            "<h5>Click any color below to change the base used in combinations.</h5>"
+            "<h5>Click any color key below to change the base used in combinations.</h5>"
         );
 
-        $("div.cTable").append("<h6><em>Google Material Design main '500' colors</em></h6>");
+        $("div.cTable").append("<h6><em>Google Material Design main '500' colors (click on to set family)</em></h6>");
         cTable("MD", baseColor, "mdarray", mdMainColors);
         $("div.cTable").append("<h6><em>Currently Selected MD Family</em></h6>");
         cTable("MD " + currentFamilyMdColor, baseColor, "mdarray", justFamilyMdColors(currentFamilyMdColor));
@@ -176,6 +177,7 @@ Raphael(function() {
             case ("complement"):
                 aList = [];
                 aList.push(tiny);
+                // tiny.complement only returns one color ... not array...
                 aList.push(tiny.complement());
                 aList = aList.map(function(rgb) {
                     return [rgb, ""];
@@ -183,16 +185,18 @@ Raphael(function() {
                 });
                 // convert array to md colors and send it to mdarray handler...
                 var x = matchMd(aList);
-                $("#colorbg1").css("background-color", x[0][0]);
-                $("#colorbg1").attr("title", x[0][1] + " (" + x[0][0] + ")");
+                $("#navcolor").css("background-color", x[0][0]);
+                $("#navcolor").attr("title", x[0][1] + " (" + x[0][0] + ")");
+                $("#logo-container").css("color", findReadable( x[0][0] ));
                 
                 $("#helpnav").empty();
                 $("#helpnav").append("<li>Top Nav: " + x[0][1] + " (" + x[0][0] + ")</li>");
                 $("#helpside").empty();
                 $("#helpside").append("<li>Top Nav: " + x[0][1] + " (" + x[0][0] + ")</li>");
                 
-                $("#colorbg2").css("background-color", x[1][0]);
-                $("#colorbg2").attr("title", x[1][1] + " (" + x[1][0] + ")");
+                $("#footcolor").css("background-color", x[1][0]);
+                $("#footcolor").attr("title", x[1][1] + " (" + x[1][0] + ")");
+                $(".fText").css("color", findReadable( x[1][0] ));
                 
                 $("#helpnav").append("<li>Footer: " + x[1][1] + " (" + x[1][0] + ")</li>");
                 $("#helpside").append("<li>Footer: " + x[1][1] + " (" + x[1][0] + ")</li>");
